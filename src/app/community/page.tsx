@@ -28,7 +28,7 @@ export default function CommunityPage() {
                 Browse the source, open issues, and submit pull requests.
               </p>
               <a
-                href="https://github.com/devforge/devforge"
+                href="https://github.com/sriganesh712/devforge"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-accent underline underline-offset-4 text-sm"
