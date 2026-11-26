@@ -1,20 +1,20 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import { ChevronRight } from 'lucide-react';
 import { marked } from 'marked';
 import fs from 'node:fs';
 import path from 'node:path';
 import { PageHeader } from '@/packages/ui/page';
+import { Badge } from '@/packages/ui/surface';
 
 const DOCS_ROOT = path.join(process.cwd(), 'docs');
 
 function resolveDoc(slug: string[]): string | null {
-  // Try exact path first
   let candidate = path.join(DOCS_ROOT, ...slug);
   if (fs.existsSync(candidate + '.md')) return candidate + '.md';
   if (fs.existsSync(candidate + '/index.md')) return candidate + '/index.md';
 
-  // Try case-insensitive match for each segment
   function tryCaseInsensitive(dir: string, remaining: string[]): string | null {
     if (remaining.length === 0) {
       if (fs.existsSync(dir + '.md')) return dir + '.md';
@@ -53,19 +53,38 @@ const docsIndex: DocLink[] = [
   {
     href: '/docs/getting-started',
     title: 'Getting Started',
-    description: 'Install DevForge, run the dev server, and learn the available scripts.',
+    description: 'Install DevForge, run the dev server, and learn the available scripts',
   },
   {
     href: '/docs/security',
     title: 'Security Policy',
-    description: 'Security design principles and how to report vulnerabilities.',
+    description: 'Security design principles and how to report vulnerabilities',
   },
   {
     href: '/docs/development/implementation-status',
     title: 'Implementation Status',
-    description: 'Current state of the project, completed work, and roadmap.',
+    description: 'Current state of the project, completed work, and roadmap',
   },
 ];
+
+function Breadcrumbs({ items }: { items: ReadonlyArray<{ label: string; href?: string }> }) {
+  return (
+    <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-1 text-[10px] text-muted">
+      {items.map((item, index) => (
+        <span key={`${item.label}-${index}`} className="flex items-center gap-1">
+          {index > 0 ? <ChevronRight className="h-3 w-3 text-line-strong" aria-hidden /> : null}
+          {item.href ? (
+            <Link href={item.href} className="transition-colors hover:text-ink">
+              {item.label}
+            </Link>
+          ) : (
+            <span className="text-ink-2">{item.label}</span>
+          )}
+        </span>
+      ))}
+    </nav>
+  );
+}
 
 function DocsIndex() {
   return (
@@ -74,15 +93,18 @@ function DocsIndex() {
         title="Documentation"
         description="Guides, security policy, and implementation status for DevForge."
       />
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="divide-y divide-line rounded-card border border-line bg-surface p-0">
         {docsIndex.map((doc) => (
           <a
             key={doc.href}
             href={doc.href}
-            className="flex flex-col gap-2 rounded-card border border-line bg-surface p-6 transition-colors hover:border-line-strong hover:bg-surface/80"
+            className="flex items-center justify-between gap-4 px-6 py-4 text-left hover:bg-surface-2 transition-colors border-b border-line/50 last:border-b-0"
           >
-            <h3 className="text-[15px] font-semibold text-ink">{doc.title}</h3>
-            <p className="text-xs leading-relaxed text-ink-2">{doc.description}</p>
+            <div className="min-w-0 flex-1">
+              <h3 className="text-[14px] font-semibold text-ink">{doc.title}</h3>
+              <p className="mt-0.5 text-[12px] leading-relaxed text-ink-2">{doc.description}</p>
+            </div>
+            <Badge tone="neutral">{doc.href.split('/').pop()}</Badge>
           </a>
         ))}
       </div>
@@ -109,10 +131,10 @@ export default async function DocsPage({ params }: DocsPageProps) {
   const resolved = await params;
   const slug: string[] = resolved.slug ?? [];
 
-  // Render index page when no slug is provided
   if (slug.length === 0) {
     return (
       <div className="space-y-6">
+        <Breadcrumbs items={[{ label: 'Docs' }]} />
         <PageHeader
           title="Documentation"
           description="Guides, security policy, and implementation status for DevForge."
@@ -129,23 +151,26 @@ export default async function DocsPage({ params }: DocsPageProps) {
 
   const source = fs.readFileSync(/*turbopackIgnore: true*/ docPath, 'utf-8');
   const rawHtml = marked.parse(source, { gfm: true, breaks: true }) as string;
-  // Strip script tags so React can safely render via dangerouslySetInnerHTML.
   const html = rawHtml.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
 
   const title = docTitle(slug);
 
   return (
     <div className="space-y-6">
+      <Breadcrumbs items={[{ label: 'Docs', href: '/docs' }, { label: title }]} />
       <PageHeader
         eyebrow="Docs"
         title={title}
         description="Local-first documentation for DevForge."
       />
-      <article className="df-prose max-w-none">
-        <div
-          className="prose prose-sm md:prose-base lg:prose-lg xl:prose-xl text-ink-2"
-          dangerouslySetInnerHTML={{ __html: html }}
-        />
+      <article className="max-w-2xl df-prose">
+        <div className="prose prose-sm md:prose-base lg:prose-lg text-ink-2">
+          {html ? (
+            <div dangerouslySetInnerHTML={{ __html: html }} />
+          ) : (
+            <p className="text-[12px] text-muted">This page is empty.</p>
+          )}
+        </div>
       </article>
     </div>
   );
