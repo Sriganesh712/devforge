@@ -34,25 +34,32 @@ function resolveDoc(slug: string[]): string | null {
   return tryCaseInsensitive(DOCS_ROOT, slug);
 }
 
+function docTitle(slug: string[]): string {
+  if (slug.length === 0) return 'Docs';
+  return slug[slug.length - 1]
+    .split('-')
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ');
+}
+
 interface DocsPageProps {
-  params: Promise<{ slug: string[] }>;
+  params: Promise<{ slug?: string[] }>;
 }
 
 export async function generateMetadata({ params }: DocsPageProps): Promise<Metadata> {
-  const { slug } = await params;
+  const resolved = await params;
+  const slug: string[] = resolved.slug ?? [];
   const docPath = resolveDoc(slug);
   if (!docPath) {
     return { title: 'Not found', description: undefined };
   }
-  const title = slug[slug.length - 1]
-    .split('-')
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(' ');
+  const title = docTitle(slug);
   return { title, description: `${title} — DevForge documentation` };
 }
 
 export default async function DocsPage({ params }: DocsPageProps) {
-  const { slug } = await params;
+  const resolved = await params;
+  const slug: string[] = resolved.slug ?? [];
   const docPath = resolveDoc(slug);
 
   if (!docPath) {
@@ -64,10 +71,7 @@ export default async function DocsPage({ params }: DocsPageProps) {
   // Strip script tags so React can safely render via dangerouslySetInnerHTML.
   const html = rawHtml.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
 
-  const title = slug[slug.length - 1]
-    .split('-')
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(' ');
+  const title = docTitle(slug);
 
   return (
     <div className="space-y-6">
