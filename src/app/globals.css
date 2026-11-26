@@ -1,0 +1,218 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+  --color-bg: var(--df-bg);
+  --color-surface: var(--df-surface);
+  --color-surface-2: var(--df-surface-2);
+  --color-line: var(--df-line);
+  --color-line-strong: var(--df-line-strong);
+  --color-ink: var(--df-ink);
+  --color-ink-2: var(--df-ink-2);
+  --color-muted: var(--df-muted);
+  --color-accent: var(--df-accent);
+  --color-accent-ink: var(--df-accent-ink);
+  --color-accent-soft: var(--df-accent-soft);
+  --color-ok: var(--df-ok);
+  --color-warn: var(--df-warn);
+  --color-danger: var(--df-danger);
+
+  --font-sans:
+    'Segoe UI Variable Text', 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue',
+    Arial, sans-serif;
+  --font-mono:
+    'Cascadia Code', 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+
+  --radius-control: 8px;
+  --radius-card: 12px;
+  --radius-panel: 16px;
+
+  --shadow-raised: 0 1px 2px rgb(28 25 20 / 0.06), 0 8px 24px -12px rgb(28 25 20 / 0.18);
+}
+
+:root {
+  --df-bg: #f4f2ec;
+  --df-surface: #fbfaf7;
+  --df-surface-2: #efece4;
+  --df-line: rgb(32 28 21 / 0.11);
+  --df-line-strong: rgb(32 28 21 / 0.2);
+  --df-ink: #1d1a15;
+  --df-ink-2: #4b463d;
+  --df-muted: #736d61;
+  --df-accent: #b0450e;
+  --df-accent-ink: #fffaf6;
+  --df-accent-soft: #f6e4d8;
+  --df-ok: #2f6b4a;
+  --df-warn: #8a5a00;
+  --df-danger: #a32b2b;
+  --df-grid: rgb(32 28 21 / 0.045);
+}
+
+.dark {
+  --df-bg: #141311;
+  --df-surface: #1b1917;
+  --df-surface-2: #24211e;
+  --df-line: rgb(242 236 226 / 0.1);
+  --df-line-strong: rgb(242 236 226 / 0.2);
+  --df-ink: #f2ede4;
+  --df-ink-2: #c8c1b4;
+  --df-muted: #958d7e;
+  --df-accent: #e88449;
+  --df-accent-ink: #1c130d;
+  --df-accent-soft: #3a2418;
+  --df-ok: #6fbf92;
+  --df-warn: #d9a441;
+  --df-danger: #e07a7a;
+  --df-grid: rgb(242 236 226 / 0.05);
+}
+
+@layer base {
+  * {
+    border-color: var(--df-line);
+  }
+
+  html {
+    color-scheme: light;
+    scroll-behavior: smooth;
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--df-bg);
+    color: var(--df-ink);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: var(--df-accent-soft);
+    color: var(--df-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--df-accent);
+    outline-offset: 2px;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
+  }
+
+  code,
+  kbd,
+  pre,
+  samp {
+    font-family: var(--font-mono);
+  }
+
+  input,
+  textarea,
+  select,
+  button {
+    font: inherit;
+  }
+
+  textarea {
+    field-sizing: content;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--df-line-strong);
+    border: 3px solid transparent;
+    background-clip: content-box;
+    border-radius: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+@layer utilities {
+  .df-grid-bg {
+    background-image:
+      linear-gradient(to right, var(--df-grid) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--df-grid) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  .df-focus-ring {
+    outline: 2px solid var(--df-accent);
+    outline-offset: 2px;
+  }
+
+  .df-scroll {
+    scrollbar-width: thin;
+  }
+}
+
+/* Markdown rendered by the docs site (trusted local files). */
+.df-prose {
+  --tw-prose-body: var(--df-ink-2);
+  --tw-prose-headings: var(--df-ink);
+  --tw-prose-lead: var(--df-ink-2);
+  --tw-prose-links: var(--df-accent);
+  --tw-prose-bold: var(--df-ink);
+  --tw-prose-counters: var(--df-muted);
+  --tw-prose-bullets: var(--df-line-strong);
+  --tw-prose-hr: var(--df-line);
+  --tw-prose-quotes: var(--df-ink-2);
+  --tw-prose-quote-borders: var(--df-accent);
+  --tw-prose-captions: var(--df-muted);
+  --tw-prose-code: var(--df-ink);
+  --tw-prose-pre-code: var(--df-ink-2);
+  --tw-prose-pre-bg: var(--df-surface-2);
+  --tw-prose-th-borders: var(--df-line-strong);
+  --tw-prose-td-borders: var(--df-line);
+  font-size: 0.9375rem;
+  line-height: 1.7;
+}
+
+.df-prose :where(code):not(:where(pre *)) {
+  background: var(--df-surface-2);
+  border: 1px solid var(--df-line);
+  border-radius: 4px;
+  padding: 0.1em 0.35em;
+  font-size: 0.86em;
+  font-weight: 400;
+}
+
+.df-prose :where(code):not(:where(pre *))::before,
+.df-prose :where(code):not(:where(pre *))::after {
+  content: none;
+}
+
+.df-prose :where(pre) {
+  border: 1px solid var(--df-line);
+  border-radius: 10px;
+}
+
+.df-prose :where(table) {
+  font-size: 0.86rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
