@@ -60,7 +60,9 @@ export default async function DocsPage({ params }: DocsPageProps) {
   }
 
   const source = fs.readFileSync(/*turbopackIgnore: true*/ docPath, 'utf-8');
-  const html = marked.parse(source, { gfm: true, breaks: true }) as string;
+  const rawHtml = marked.parse(source, { gfm: true, breaks: true }) as string;
+  // Strip script tags so React can safely render via dangerouslySetInnerHTML.
+  const html = rawHtml.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
 
   const title = slug[slug.length - 1]
     .split('-')
