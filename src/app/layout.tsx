@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
+import Script from 'next/script';
 import { AppShell } from '@/components/app-shell';
 import { tools } from '@/packages/tool-sdk/registry';
 import { toCatalogEntry } from '@/packages/tool-sdk/public';
@@ -42,7 +43,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <Script id="theme-init" strategy="beforeInteractive">
+          {themeScript}
+        </Script>
       </head>
       <body>
         <AppShell catalog={catalog}>{children}</AppShell>
