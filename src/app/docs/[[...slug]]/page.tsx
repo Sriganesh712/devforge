@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import Link from 'next/link';
 import { marked } from 'marked';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -42,6 +43,53 @@ function docTitle(slug: string[]): string {
     .join(' ');
 }
 
+interface DocLink {
+  href: string;
+  title: string;
+  description: string;
+}
+
+const docsIndex: DocLink[] = [
+  {
+    href: '/docs/getting-started',
+    title: 'Getting Started',
+    description: 'Install DevForge, run the dev server, and learn the available scripts.',
+  },
+  {
+    href: '/docs/security',
+    title: 'Security Policy',
+    description: 'Security design principles and how to report vulnerabilities.',
+  },
+  {
+    href: '/docs/development/implementation-status',
+    title: 'Implementation Status',
+    description: 'Current state of the project, completed work, and roadmap.',
+  },
+];
+
+function DocsIndex() {
+  return (
+    <div className="space-y-6">
+      <PageHeader
+        title="Documentation"
+        description="Guides, security policy, and implementation status for DevForge."
+      />
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {docsIndex.map((doc) => (
+          <a
+            key={doc.href}
+            href={doc.href}
+            className="flex flex-col gap-2 rounded-card border border-line bg-surface p-6 transition-colors hover:border-line-strong hover:bg-surface/80"
+          >
+            <h3 className="text-[15px] font-semibold text-ink">{doc.title}</h3>
+            <p className="text-xs leading-relaxed text-ink-2">{doc.description}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 interface DocsPageProps {
   params: Promise<{ slug?: string[] }>;
 }
@@ -60,8 +108,21 @@ export async function generateMetadata({ params }: DocsPageProps): Promise<Metad
 export default async function DocsPage({ params }: DocsPageProps) {
   const resolved = await params;
   const slug: string[] = resolved.slug ?? [];
-  const docPath = resolveDoc(slug);
 
+  // Render index page when no slug is provided
+  if (slug.length === 0) {
+    return (
+      <div className="space-y-6">
+        <PageHeader
+          title="Documentation"
+          description="Guides, security policy, and implementation status for DevForge."
+        />
+        <DocsIndex />
+      </div>
+    );
+  }
+
+  const docPath = resolveDoc(slug);
   if (!docPath) {
     notFound();
   }
