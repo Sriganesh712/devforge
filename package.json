@@ -4,6 +4,7 @@
   "private": true,
   "description": "One platform. Every developer tool. A local-first, open-source developer productivity workspace.",
   "license": "Apache-2.0",
+  "packageManager": "pnpm@12.23.0",
   "engines": {
     "node": ">=20.9.0"
   },
