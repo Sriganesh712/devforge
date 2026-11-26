@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useLayoutEffect, useState } from 'react';
 import {
   applyTheme,
   readThemePreference,
@@ -15,7 +15,7 @@ export function useTheme() {
   const [resolved, setResolved] = useState<'light' | 'dark'>('light');
   const [ready, setReady] = useState(false);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const sync = () => {
       const next = readThemePreference();
       setPreference(next);

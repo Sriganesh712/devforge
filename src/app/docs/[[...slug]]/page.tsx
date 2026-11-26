@@ -5,8 +5,7 @@ import { ChevronRight } from 'lucide-react';
 import { marked } from 'marked';
 import fs from 'node:fs';
 import path from 'node:path';
-import { PageHeader } from '@/packages/ui/page';
-import { Badge } from '@/packages/ui/surface';
+import { Breadcrumbs, PageHeader } from '@/packages/ui/page';
 
 const DOCS_ROOT = path.join(process.cwd(), 'docs');
 
@@ -67,56 +66,7 @@ const docsIndex: DocLink[] = [
   },
 ];
 
-function Breadcrumbs({ items }: { items: ReadonlyArray<{ label: string; href?: string }> }) {
-  return (
-    <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-1 text-[10px] text-muted">
-      {items.map((item, index) => (
-        <span key={`${item.label}-${index}`} className="flex items-center gap-1">
-          {index > 0 ? <ChevronRight className="h-3 w-3 text-line-strong" aria-hidden /> : null}
-          {item.href ? (
-            <Link href={item.href} className="transition-colors hover:text-ink">
-              {item.label}
-            </Link>
-          ) : (
-            <span className="text-ink-2">{item.label}</span>
-          )}
-        </span>
-      ))}
-    </nav>
-  );
-}
-
-function DocsIndex() {
-  return (
-    <div className="space-y-6">
-      <PageHeader
-        title="Documentation"
-        description="Guides, security policy, and implementation status for DevForge."
-      />
-      <div className="divide-y divide-line rounded-card border border-line bg-surface p-0">
-        {docsIndex.map((doc) => (
-          <a
-            key={doc.href}
-            href={doc.href}
-            className="flex items-center justify-between gap-4 px-6 py-4 text-left hover:bg-surface-2 transition-colors border-b border-line/50 last:border-b-0"
-          >
-            <div className="min-w-0 flex-1">
-              <h3 className="text-[14px] font-semibold text-ink">{doc.title}</h3>
-              <p className="mt-0.5 text-[12px] leading-relaxed text-ink-2">{doc.description}</p>
-            </div>
-            <Badge tone="neutral">{doc.href.split('/').pop()}</Badge>
-          </a>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-interface DocsPageProps {
-  params: Promise<{ slug?: string[] }>;
-}
-
-export async function generateMetadata({ params }: DocsPageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ slug?: string[] }> }): Promise<Metadata> {
   const resolved = await params;
   const slug: string[] = resolved.slug ?? [];
   const docPath = resolveDoc(slug);
@@ -127,7 +77,7 @@ export async function generateMetadata({ params }: DocsPageProps): Promise<Metad
   return { title, description: `${title} — DevForge documentation` };
 }
 
-export default async function DocsPage({ params }: DocsPageProps) {
+export default async function DocsPage({ params }: { params: Promise<{ slug?: string[] }> }) {
   const resolved = await params;
   const slug: string[] = resolved.slug ?? [];
 
@@ -139,7 +89,20 @@ export default async function DocsPage({ params }: DocsPageProps) {
           title="Documentation"
           description="Guides, security policy, and implementation status for DevForge."
         />
-        <DocsIndex />
+        <div className="divide-y divide-line rounded-card border border-line bg-surface p-0">
+          {docsIndex.map((doc) => (
+            <a
+              key={doc.href}
+              href={doc.href}
+              className="flex items-center justify-between gap-4 px-6 py-4 text-left hover:bg-surface-2 transition-colors border-b border-line/50 last:border-b-0"
+            >
+              <div className="min-w-0 flex-1">
+                <h3 className="text-[14px] font-semibold text-ink">{doc.title}</h3>
+                <p className="mt-0.5 text-[12px] leading-relaxed text-ink-2">{doc.description}</p>
+              </div>
+            </a>
+          ))}
+        </div>
       </div>
     );
   }
